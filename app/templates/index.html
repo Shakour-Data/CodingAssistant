@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h1 class="card-title">Welcome to Code Assistant</h1>
+    </div>
+    <div class="card-body">
+        <p>Code Assistant is an AI-powered tool that helps you with coding tasks using local AI models.</p>
+        
+        <h2>Features</h2>
+        <ul>
+            <li>Download and manage AI models locally</li>
+            <li>Run models on your own machine</li>
+            <li>Generate code suggestions</li>
+            <li>Code completion and analysis</li>
+            <li>No internet connection required after models are downloaded</li>
+        </ul>
+        
+        <h2>Getting Started</h2>
+        <ol>
+            <li>Go to the <a href="{{ url_for('main.model_manager') }}">Model Manager</a></li>
+            <li>Download a model (we recommend starting with GPT4All-J)</li>
+            <li>Start the model</li>
+            <li>Use the model for code generation and assistance</li>
+        </ol>
+        
+        <div class="mt-4">
+            <a href="{{ url_for('main.model_manager') }}" class="btn btn-primary">Go to Model Manager</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
