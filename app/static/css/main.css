@@ -1,0 +1,7 @@
+/* main.css - Extracted from Code.md */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+:root { --primary-color: #6366f1; --secondary-color: #8b5cf6; --success-color: #10b981; --danger-color: #ef4444; --warning-color: #f59e0b; --info-color: #3b82f6; --dark-color: #1e293b; --light-color: #f8fafc; --sidebar-width: 280px; --header-height: 70px; --border-radius: 12px; --transition: all 0.3s ease; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; color: var(--dark-color); }
+/* ...existing code... */
+/* (Full CSS from Code.md will be placed here) */
