@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card chat-card">
+    <div class="card-header">
+        <h1 class="card-title">AI Code Assistant Chat</h1>
+    </div>
+    <div class="card-body chat-body" id="chat-body">
+        <!-- Chat messages will appear here -->
+    </div>
+    <form class="chat-form" id="chat-form" autocomplete="off">
+        <div class="chat-input-row">
+            <select id="chat-model" class="form-input" style="max-width:160px;">
+                <option value="gpt4all-j">GPT4All-J</option>
+                <option value="llama-2-7b">Llama 2 7B</option>
+                <option value="mistral-7b">Mistral 7B</option>
+                <option value="codellama-7b">Code Llama 7B</option>
+                <option value="phi-2">Phi-2</option>
+            </select>
+            <input id="chat-input" class="form-input" type="text" placeholder="Type your code question..." required autofocus style="flex:1; margin:0 0.5rem;">
+            <button class="btn btn-primary" type="submit">Send</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const chatBody = document.getElementById('chat-body');
+const chatForm = document.getElementById('chat-form');
+const chatInput = document.getElementById('chat-input');
+const chatModel = document.getElementById('chat-model');
+
+function appendMessage(text, sender) {
+    const msg = document.createElement('div');
+    msg.className = 'chat-msg ' + (sender === 'user' ? 'chat-user' : 'chat-ai');
+    msg.innerHTML = sender === 'ai' ? `<span class="chat-avatar">🤖</span><div class="chat-bubble">${text}</div>` : `<div class="chat-bubble">${text}</div><span class="chat-avatar">🧑‍💻</span>`;
+    chatBody.appendChild(msg);
+    chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+function appendLoader() {
+    const loader = document.createElement('div');
+    loader.className = 'chat-loader';
+    loader.innerHTML = '<span class="loader"></span>';
+    chatBody.appendChild(loader);
+    chatBody.scrollTop = chatBody.scrollHeight;
+    return loader;
+}
+
+chatForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const prompt = chatInput.value.trim();
+    if (!prompt) return;
+    appendMessage(prompt, 'user');
+    chatInput.value = '';
+    const loader = appendLoader();
+    try {
+        const response = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ model_id: chatModel.value, prompt })
+        });
+        const data = await response.json();
+        loader.remove();
+        if (response.ok && data.result) {
+            appendMessage(data.result, 'ai');
+        } else {
+            appendMessage(data.error || 'Error from server', 'ai');
+        }
+    } catch (err) {
+        loader.remove();
+        appendMessage('Network error', 'ai');
+    }
+});
+</script>
+{% endblock %}
