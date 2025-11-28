@@ -1,0 +1,338 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="dashboard-container">
+    <h1 class="dashboard-title">Project Dashboard</h1>
+    <form id="project-init-form" class="card" style="max-width:700px;margin:2rem auto 1.5rem auto;padding:2rem 2.5rem;">
+        <h2 style="margin-bottom:1rem;color:#3730a3;">شروع پروژه جدید</h2>
+        <textarea id="project-desc" class="form-input" rows="3" placeholder="پروژه خود را به فارسی یا انگلیسی توصیف کنید..." required></textarea>
+        <button type="submit" class="btn btn-primary" style="margin-top:1rem;">شروع خودکار توسعه</button>
+    </form>
+    <div id="auto-progress-modal" class="modal" style="display:none;">
+        <div class="modal-content" style="max-width:600px;">
+            <span class="close" onclick="closeAutoProgressModal()">&times;</span>
+            <h3>فرآیند خودکار توسعه پروژه</h3>
+            <div id="auto-progress-body" style="margin-top:1.2rem;max-height:350px;overflow-y:auto;font-size:1.08rem;"></div>
+        </div>
+    </div>
+    <div class="dashboard-cards">
+        <div class="dashboard-card" id="card-coding">
+            <h2>Auto Coding</h2>
+            <p>Generate and complete code with AI.</p>
+            <a href="#" class="btn btn-primary" onclick="openAutoCodingModal()">Generate Code</a>
+        </div>
+        <!-- Auto Coding Modal -->
+        <div id="autoCodingModal" class="modal" style="display:none;">
+            <div class="modal-content">
+                <span class="close" onclick="closeAutoCodingModal()">&times;</span>
+                <h3>AI Code Generation</h3>
+                <form id="auto-coding-form">
+                    <label>Model:
+                        <select id="ac-model" class="form-input">
+                            <option value="gpt4all-j">GPT4All-J</option>
+                            <option value="llama-2-7b">Llama 2 7B</option>
+                            <option value="mistral-7b">Mistral 7B</option>
+                            <option value="codellama-7b">Code Llama 7B</option>
+                            <option value="phi-2">Phi-2</option>
+                        </select>
+                    </label>
+                    <label>Language:
+                        <input id="ac-language" class="form-input" type="text" placeholder="e.g. Python, JavaScript (optional)">
+                    </label>
+                    <label>Prompt:
+                        <textarea id="ac-prompt" class="form-input" rows="3" placeholder="Describe what you want to code..."></textarea>
+                    </label>
+                    <button type="submit" class="btn btn-primary">Generate</button>
+                </form>
+                <pre id="ac-result" class="code-block" style="margin-top:1rem;"></pre>
+            </div>
+        </div>
+        <div class="dashboard-card" id="card-project">
+            <h2>Project Management</h2>
+            <p>Manage tasks, docs, and files automatically.</p>
+            <a href="#" class="btn btn-secondary" onclick="openProjectManagerModal()">Open Manager</a>
+        </div>
+        <!-- Project Manager Modal -->
+        <div id="projectManagerModal" class="modal" style="display:none;">
+            <div class="modal-content">
+                <span class="close" onclick="closeProjectManagerModal()">&times;</span>
+                <h3>Project Tasks</h3>
+                <form id="pm-task-form" style="margin-bottom:1rem;">
+                    <input id="pm-task-title" class="form-input" type="text" placeholder="Task title" required>
+                    <input id="pm-task-desc" class="form-input" type="text" placeholder="Description (optional)">
+                    <button type="submit" class="btn btn-primary">Add Task</button>
+                </form>
+                <ul id="pm-task-list" class="pm-task-list"></ul>
+            </div>
+        </div>
+        <div class="dashboard-card" id="card-debug">
+            <h2>Auto Debug</h2>
+            <p>Detect and fix code errors with AI.</p>
+            <a href="#" class="btn btn-secondary" onclick="openAutoDebugModal()">Start Debug</a>
+        </div>
+        <!-- Auto Debug Modal -->
+        <div id="autoDebugModal" class="modal" style="display:none;">
+            <div class="modal-content">
+                <span class="close" onclick="closeAutoDebugModal()">&times;</span>
+                <h3>Python Lint & Debug</h3>
+                <form id="auto-debug-form">
+                    <input id="ad-file" class="form-input" type="text" placeholder="Relative path to .py file" required>
+                    <button type="submit" class="btn btn-primary">Check</button>
+                </form>
+                <pre id="ad-result" class="code-block" style="margin-top:1rem;"></pre>
+            </div>
+        </div>
+        <div class="dashboard-card" id="card-test">
+            <h2>Auto Test</h2>
+            <p>Generate and run tests automatically.</p>
+            <a href="#" class="btn btn-secondary" onclick="openAutoTestModal()">Run Tests</a>
+        </div>
+        <!-- Auto Test Modal -->
+        <div id="autoTestModal" class="modal" style="display:none;">
+            <div class="modal-content">
+                <span class="close" onclick="closeAutoTestModal()">&times;</span>
+                <h3>Run Python Tests</h3>
+                <form id="auto-test-form">
+                    <input id="at-file" class="form-input" type="text" placeholder="Relative path to test file/folder (optional)">
+                    <button type="submit" class="btn btn-primary">Run</button>
+                </form>
+                <pre id="at-result" class="code-block" style="margin-top:1rem;"></pre>
+            </div>
+        </div>
+        <div class="dashboard-card" id="card-plan">
+            <h2>Auto Planning</h2>
+            <p>AI-powered project planning and tracking.</p>
+            <a href="#" class="btn btn-secondary" onclick="openAutoPlanningModal()">View Plan</a>
+        </div>
+        <!-- Auto Planning Modal -->
+        <div id="autoPlanningModal" class="modal" style="display:none;">
+            <div class="modal-content">
+                <span class="close" onclick="closeAutoPlanningModal()">&times;</span>
+                <h3>Project Planning</h3>
+                <form id="auto-planning-form">
+                    <textarea id="ap-desc" class="form-input" rows="3" placeholder="Describe your project..."></textarea>
+                    <button type="submit" class="btn btn-primary">Suggest Plan</button>
+                </form>
+                <ul id="ap-result" class="pm-task-list" style="margin-top:1rem;"></ul>
+            </div>
+        </div>
+    {% block scripts %}
+    <script>
+    // Project Init & Auto Progress
+    document.getElementById('project-init-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const desc = document.getElementById('project-desc').value.trim();
+        if (!desc) return;
+        openAutoProgressModal();
+        setAutoProgress('در حال تحلیل پروژه و شروع فرآیند خودکار...');
+        // Call backend automation API (to be implemented)
+        try {
+            const response = await fetch('/api/auto-develop', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ description: desc })
+            });
+            const data = await response.json();
+            if (response.ok && data.progress) {
+                setAutoProgress(data.progress.map(p => `<li>${p}</li>`).join(''), true);
+            } else {
+                setAutoProgress(data.error || 'خطا در فرآیند توسعه خودکار');
+            }
+        } catch (err) {
+            setAutoProgress('خطا در ارتباط با سرور');
+        }
+    });
+    function openAutoProgressModal() {
+        document.getElementById('auto-progress-modal').style.display = 'flex';
+        setAutoProgress('');
+    }
+    function closeAutoProgressModal() {
+        document.getElementById('auto-progress-modal').style.display = 'none';
+    }
+    function setAutoProgress(html, isList) {
+        const el = document.getElementById('auto-progress-body');
+        el.innerHTML = isList ? `<ul>${html}</ul>` : html;
+    }
+    // Auto Coding Modal
+    function openAutoCodingModal() {
+        document.getElementById('autoCodingModal').style.display = 'flex';
+        document.getElementById('ac-result').textContent = '';
+    }
+    function closeAutoCodingModal() {
+        document.getElementById('autoCodingModal').style.display = 'none';
+    }
+    document.getElementById('auto-coding-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const model = document.getElementById('ac-model').value;
+        const prompt = document.getElementById('ac-prompt').value.trim();
+        const language = document.getElementById('ac-language').value.trim();
+        const resultBlock = document.getElementById('ac-result');
+        resultBlock.textContent = 'Generating...';
+        try {
+            const response = await fetch('/api/auto-coding', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ model_id: model, prompt: prompt, language: language })
+            });
+            const data = await response.json();
+            if (response.ok && data.result) {
+                resultBlock.textContent = data.result;
+            } else {
+                resultBlock.textContent = data.error || 'Error from server';
+            }
+        } catch (err) {
+            resultBlock.textContent = 'Network error';
+        }
+    });
+
+    // Project Manager Modal
+    function openProjectManagerModal() {
+        document.getElementById('projectManagerModal').style.display = 'flex';
+        loadProjectTasks();
+    }
+    function closeProjectManagerModal() {
+        document.getElementById('projectManagerModal').style.display = 'none';
+    }
+    async function loadProjectTasks() {
+        const list = document.getElementById('pm-task-list');
+        list.innerHTML = '<li>Loading...</li>';
+        try {
+            const res = await fetch('/api/project/tasks');
+            const data = await res.json();
+            if (res.ok && data.tasks) {
+                if (data.tasks.length === 0) {
+                    list.innerHTML = '<li>No tasks yet.</li>';
+                } else {
+                    list.innerHTML = '';
+                    data.tasks.forEach(task => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<b>${task.title}</b> <span style='color:#888;'>${task.description||''}</span> <button onclick="deleteProjectTask(${task.id})">🗑️</button>`;
+                        list.appendChild(li);
+                    });
+                }
+            } else {
+                list.innerHTML = '<li>Error loading tasks</li>';
+            }
+        } catch {
+            list.innerHTML = '<li>Network error</li>';
+        }
+    }
+    document.getElementById('pm-task-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const title = document.getElementById('pm-task-title').value.trim();
+        const desc = document.getElementById('pm-task-desc').value.trim();
+        if (!title) return;
+        try {
+            await fetch('/api/project/tasks', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title: title, description: desc })
+            });
+            document.getElementById('pm-task-title').value = '';
+            document.getElementById('pm-task-desc').value = '';
+            loadProjectTasks();
+        } catch {}
+    });
+    async function deleteProjectTask(id) {
+        try {
+            await fetch(`/api/project/tasks/${id}`, { method: 'DELETE' });
+            loadProjectTasks();
+        } catch {}
+    }
+
+    // Auto Debug Modal
+    function openAutoDebugModal() {
+        document.getElementById('autoDebugModal').style.display = 'flex';
+        document.getElementById('ad-result').textContent = '';
+    }
+    function closeAutoDebugModal() {
+        document.getElementById('autoDebugModal').style.display = 'none';
+    }
+    document.getElementById('auto-debug-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const file = document.getElementById('ad-file').value.trim();
+        const resultBlock = document.getElementById('ad-result');
+        resultBlock.textContent = 'Checking...';
+        try {
+            const response = await fetch('/api/auto-debug', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ file })
+            });
+            const data = await response.json();
+            if (response.ok && data.status === 'ok') {
+                resultBlock.textContent = data.message;
+            } else {
+                resultBlock.textContent = data.message || data.error || 'Error from server';
+            }
+        } catch (err) {
+            resultBlock.textContent = 'Network error';
+        }
+    });
+
+    // Auto Test Modal
+    function openAutoTestModal() {
+        document.getElementById('autoTestModal').style.display = 'flex';
+        document.getElementById('at-result').textContent = '';
+    }
+    function closeAutoTestModal() {
+        document.getElementById('autoTestModal').style.display = 'none';
+    }
+    document.getElementById('auto-test-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const file = document.getElementById('at-file').value.trim();
+        const resultBlock = document.getElementById('at-result');
+        resultBlock.textContent = 'Running tests...';
+        try {
+            const response = await fetch('/api/auto-test', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ file })
+            });
+            const data = await response.json();
+            if (response.ok && data.output) {
+                resultBlock.textContent = data.output;
+            } else {
+                resultBlock.textContent = data.error || 'Error from server';
+            }
+        } catch (err) {
+            resultBlock.textContent = 'Network error';
+        }
+    });
+
+    // Auto Planning Modal
+    function openAutoPlanningModal() {
+        document.getElementById('autoPlanningModal').style.display = 'flex';
+        document.getElementById('ap-result').innerHTML = '';
+    }
+    function closeAutoPlanningModal() {
+        document.getElementById('autoPlanningModal').style.display = 'none';
+    }
+    document.getElementById('auto-planning-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const desc = document.getElementById('ap-desc').value.trim();
+        const resultList = document.getElementById('ap-result');
+        resultList.innerHTML = '<li>Generating plan...</li>';
+        try {
+            const response = await fetch('/api/auto-planning', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ description: desc })
+            });
+            const data = await response.json();
+            if (response.ok && data.plan) {
+                resultList.innerHTML = '';
+                data.plan.forEach(step => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<b>${step.step}. ${step.title}</b> <span style='color:#888;'>${step.desc}</span>`;
+                    resultList.appendChild(li);
+                });
+            } else {
+                resultList.innerHTML = `<li>${data.error || 'Error from server'}</li>`;
+            }
+        } catch (err) {
+            resultList.innerHTML = '<li>Network error</li>';
+        }
+    });
+    </script>
+    {% endblock %}
+{% endblock %}
