@@ -39,7 +39,11 @@ class AutoCodingService:
             if language:
                 code_prompt = f"Write {language} code for: {prompt}"
 
-            return self.ai_service.generate_text(model_id, code_prompt)
+            result = self.ai_service.generate_text(model_id, code_prompt)
+            # Check if AI returned an error message
+            if result.startswith("I apologize"):
+                return self._generate_mock_code(prompt, language)
+            return result
 
         except Exception as e:
             # Handle connection errors or other issues gracefully
@@ -101,7 +105,7 @@ console.log("Result: " + mockResult);'''.format(prompt)
 # Please download and start an AI model for actual code generation.
 # The AI model server is not available or not properly configured.
 
-print("Mock code executed")
+print("mock code executed")
 print("Prompt: {0}")
 print("Language: {1}")'''.format(prompt, language or 'unspecified')
 

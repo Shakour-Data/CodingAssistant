@@ -43,5 +43,42 @@ class Config:
             'size': '1.7GB',
             'type': 'gguf',
             'port': 8004
+        },
+        # Ollama models
+        'gpt-oss:20b-cloud': {
+            'name': 'GPT-OSS 20B Cloud',
+            'size': 'Unknown',
+            'type': 'ollama',
+            'port': 11434
+        },
+        'deepseek-v3.1:671b-cloud': {
+            'name': 'DeepSeek V3.1 671B Cloud',
+            'size': 'Unknown',
+            'type': 'ollama',
+            'port': 11434
+        },
+        'gpt-oss:120b-cloud': {
+            'name': 'GPT-OSS 120B Cloud',
+            'size': 'Unknown',
+            'type': 'ollama',
+            'port': 11434
+        },
+        'stable-code:3b-code-q4_0': {
+            'name': 'Stable Code 3B Code Q4_0',
+            'size': '1.6GB',
+            'type': 'ollama',
+            'port': 11434
+        },
+        'gpt-oss:120b': {
+            'name': 'GPT-OSS 120B',
+            'size': '65GB',
+            'type': 'ollama',
+            'port': 11434
+        },
+        'glm-4.6:cloud': {
+            'name': 'GLM 4.6 Cloud',
+            'size': 'Unknown',
+            'type': 'ollama',
+            'port': 11434
         }
     }

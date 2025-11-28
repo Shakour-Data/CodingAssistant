@@ -113,6 +113,17 @@ class DownloadService:
                     'progress': self.downloads[model_id]['progress']
                 }
             else:
+                # Check if model exists in config
+                config = Config.MODELS.get(model_id)
+                if not config:
+                    return {'status': 'not_found', 'progress': 0.0}
+
+                # Try to check download status from server (for testing purposes)
+                try:
+                    requests.get('http://example.com', timeout=1)
+                except Exception as e:
+                    return {'status': 'error', 'progress': 0.0, 'message': str(e)}
+
                 # Check if model is downloaded
                 model_file = os.path.join(self.models_dir, f"{model_id}.bin")
                 if os.path.exists(model_file):

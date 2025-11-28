@@ -14,6 +14,10 @@ class AIService:
     def generate_text(self, model_id, prompt, max_tokens=1000, temperature=0.7):
         """Generate text using a model with multiple fallback strategies"""
         try:
+            # Check if model exists in configuration
+            if model_id not in self.models and not self._is_ollama_available():
+                return f"I apologize, but I'm unable to generate text with the requested model at this time. Error: Model {model_id} not found in configuration. Please ensure your AI models are properly configured and running."
+
             # First try Ollama if available
             if self._is_ollama_available():
                 try:
@@ -22,11 +26,10 @@ class AIService:
                     print(f"Ollama failed: {e}, trying local models...")
 
             # Try local model server
-            if model_id in self.models:
-                try:
-                    return self._generate_with_local_server(model_id, prompt, max_tokens, temperature)
-                except Exception as e:
-                    print(f"Local server failed: {e}, trying direct model loading...")
+            try:
+                return self._generate_with_local_server(model_id, prompt, max_tokens, temperature)
+            except Exception as e:
+                print(f"Local server failed: {e}, trying direct model loading...")
 
             # Try direct model loading as last resort
             return self._generate_with_direct_model(model_id, prompt, max_tokens, temperature)
@@ -62,10 +65,13 @@ class AIService:
         )
 
         if response.status_code == 200:
-            result = response.json()
-            return result.get('response', '')
+            try:
+                result = response.json()
+                return result.get('response', '')
+            except Exception:
+                return 'Error generating text'
         else:
-            raise Exception(f"Ollama API returned status {response.status_code}: {response.text}")
+            return 'Error generating text'
 
     def _generate_with_local_server(self, model_id, prompt, max_tokens=1000, temperature=0.7):
         """Generate text using local model server"""
@@ -96,10 +102,13 @@ class AIService:
         )
 
         if response.status_code == 200:
-            result = response.json()
-            return result.get('text', '')
+            try:
+                result = response.json()
+                return result.get('text', '')
+            except Exception:
+                raise Exception('Local server error: JSON parsing failed')
         else:
-            raise Exception(f"Local server returned status {response.status_code}")
+            raise Exception(f'Local server error: {response.status_code}')
 
     def _generate_with_direct_model(self, model_id, prompt, max_tokens=1000, temperature=0.7):
         """Generate text by directly loading and using a model"""

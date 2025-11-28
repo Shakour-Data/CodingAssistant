@@ -14,22 +14,22 @@ class ModelService:
         self.running_models = {}
         self.lock = Lock()
         self.models_dir = Config.MODELS_DIR
-        
+
     def get_models(self):
         """Get list of all models with their status"""
         models = []
 
+        # Always include models from config, regardless of download status
+        available_models = dict(Config.MODELS)
+
         # Scan downloads directory for actual downloaded models
         downloads_dir = os.path.join(self.models_dir, 'downloads')
-        available_models = self._scan_downloaded_models(downloads_dir)
+        downloaded_models = self._scan_downloaded_models(downloads_dir)
 
-        # Also include models from config that might be downloaded as .bin files
-        for model_id, config in Config.MODELS.items():
+        # Merge with downloaded models
+        for model_id, config in downloaded_models.items():
             if model_id not in available_models:
-                # Check if model file exists as .bin
-                model_file = os.path.join(self.models_dir, f"{model_id}.bin")
-                if os.path.exists(model_file):
-                    available_models[model_id] = config
+                available_models[model_id] = config
 
         # Include any .bin files in the models directory as available models
         if os.path.exists(self.models_dir):
@@ -135,7 +135,7 @@ class ModelService:
             # For traditional models, check for .bin file
             model_file = os.path.join(self.models_dir, f"{model_id}.bin")
             return os.path.exists(model_file)
-    
+
     def start_model(self, model_id):
         """Start a model server"""
         with self.lock:
@@ -197,7 +197,7 @@ class ModelService:
                 return {'success': False, 'message': 'Ollama service is not running'}
         except Exception as e:
             return {'success': False, 'message': f'Cannot connect to Ollama: {str(e)}. Make sure Ollama is installed and running.'}
-    
+
     def stop_model(self, model_id):
         """Stop a model server"""
         with self.lock:
@@ -236,11 +236,11 @@ class ModelService:
 
             except Exception as e:
                 return {'success': False, 'message': str(e)}
-    
+
     def _wait_for_server(self, port, timeout=30):
         """Wait for server to be ready"""
         start_time = time.time()
-        
+
         while time.time() - start_time < timeout:
             try:
                 response = requests.get(f'http://localhost:{port}/health', timeout=1)
@@ -248,7 +248,7 @@ class ModelService:
                     return True
             except:
                 pass
-            
+
             time.sleep(1)
-        
+
         return False
