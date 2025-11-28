@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h1 class="card-title">Settings</h1>
+    </div>
+    <div class="card-body">
+        <form id="settings-form">
+            <div class="form-group">
+                <label class="form-label" for="models-dir">Models Directory</label>
+                <input class="form-input" type="text" id="models-dir" name="models_dir" value="{{ config['MODELS_DIR'] }}">
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="max-content-length">Max Content Length (MB)</label>
+                <input class="form-input" type="number" id="max-content-length" name="max_content_length" value="{{ config['MAX_CONTENT_LENGTH'] // (1024*1024) }}">
+            </div>
+            <div class="form-group">
+                <button class="btn btn-primary" type="submit">Save Settings</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">About</h2>
+    </div>
+    <div class="card-body">
+        <p><strong>Code Assistant</strong> v1.0.0</p>
+        <p>An AI-powered code assistant that runs locally on your machine.</p>
+        <p>Created with Flask and modern AI models.</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('settings-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const formData = {
+        models_dir: document.getElementById('models-dir').value,
+        max_content_length: parseInt(document.getElementById('max-content-length').value) * 1024 * 1024
+    };
+    
+    try {
+        const response = await fetch('/api/settings', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+        });
+        
+        if (response.ok) {
+            alert('Settings saved successfully!');
+        } else {
+            alert('Failed to save settings');
+        }
+    } catch (error) {
+        console.error('Error saving settings:', error);
+        alert('Failed to save settings');
+    }
+});
+</script>
+{% endblock %}
