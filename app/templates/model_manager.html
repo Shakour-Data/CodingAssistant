@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h1 class="card-title">Model Manager</h1>
+    </div>
+    <div class="card-body">
+        <p>Download, start, and manage AI models on your local machine.</p>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="card-title">Available Models</h2>
+    </div>
+    <div class="card-body">
+        <div id="models-container" class="model-grid">
+            <!-- Models will be loaded here dynamically -->
+        </div>
+    </div>
+</div>
+{% endblock %}
